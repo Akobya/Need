@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
   <title>Quiz of MHC-HNSLI-2017</title>
+  <script src="https://cdn.jsdelivr.net/npm/@vitalets/google-translate-api@1.0.0/dist/index.min.js"></script>
   <style>
     * {
       margin: 0;
@@ -30,6 +31,660 @@
       max-width: 400px;
       width: 100%;
       -webkit-box-shadow: 0 0 10px #fff;
+      background: linear-gradient(40deg, blue, black);
+    }
+
+    .quiz-container h1 {
+      font-size: 1.5em;
+      margin-bottom: 20px;
+      text-align: center;
+      color: #fff;
+      text-shadow: 0 0 2px black;
+    }
+
+    .question {
+      font-size: 1.2em;
+      margin-bottom: 15px;
+      color: #fff;
+      text-shadow: 0 0 2px black;
+    }
+
+    .options label {
+      color: #fff;
+      display: block;
+      background: linear-gradient(rgb(100 100 170), black);
+      margin: 8px 0;
+      padding: 10px;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+
+    .options label:hover {
+      text-shadow: 0 0 7px #000;
+      background: linear-gradient(rgb(50 50 160), lightblue);
+      -webkit-box-shadow: 0 0 10px #fff;
+      -moz-box-shadow: 0 0 10px #fff;
+      box-shadow: 0 0 10px #fff;
+    }
+
+    .options input[type="radio"] {
+      margin-right: 10px;
+    }
+
+    .result {
+      margin-top: 20px;
+      font-size: 1em;
+      color: #555;
+    }
+
+    .result h3, h4 {
+      color: #fff;
+      text-shadow: 0 0 2px black;
+    }
+
+    .btn-container {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 20px;
+    }
+
+    button {
+      padding: 10px 15px;
+      border: none;
+      border-radius: 5px;
+      background: lightblue;
+      color: #000;
+      cursor: pointer;
+      font-size: 1em;
+      transition: all 0.3s;
+    }
+
+    button:hover {
+      background: #0056b3;
+    }
+
+    button:disabled {
+      background: #cccccc;
+      cursor: not-allowed;
+    }
+
+    .restart {
+      background: #28a745;
+    }
+
+    .restart:hover {
+      background: #218838;
+    }
+
+    .previous {
+      background: #ffc107;
+      color: #000;
+    }
+
+    .previous:hover {
+      background: #e0a800;
+    }
+
+    ul {
+      list-style: none;
+      padding: 0;
+      margin-top: 10px;
+    }
+
+    ul li {
+      margin-bottom: 10px;
+      background: #f8f9fa;
+      padding: 10px;
+      border-radius: 5px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    .feedback-message {
+      color: #fff;
+      font-weight: bold;
+      text-align: center;
+      margin-top: 10px;
+      min-height: 24px;
+    }
+
+    .correct-feedback {
+      color: #4CAF50;
+      animation: pulse 0.5s;
+    }
+
+    .wrong-feedback {
+      color: #f44336;
+      animation: shake 0.5s;
+    }
+
+    .progress-container {
+      width: 100%;
+      background-color: #ddd;
+      border-radius: 5px;
+      margin-bottom: 15px;
+    }
+
+    .progress-bar {
+      height: 10px;
+      background-color: #4CAF50;
+      border-radius: 5px;
+      width: 0%;
+      transition: width 0.3s;
+    }
+
+    @keyframes pulse {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.1); }
+      100% { transform: scale(1); }
+    }
+
+    @keyframes shake {
+      0%, 100% { transform: translateX(0); }
+      20%, 60% { transform: translateX(-5px); }
+      40%, 80% { transform: translateX(5px); }
+    }
+
+    @media (max-width: 480px) {
+      .quiz-container {
+        padding: 15px;
+      }
+
+      .quiz-container h1 {
+        font-size: 1.2em;
+      }
+      .name {
+        float: right;
+      }
+    }
+
+    .tops {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin: 6px;
+      color: #fff;
+    }
+
+    .translate-container {
+      display: flex;
+      align-items: center;
+      margin-bottom: 15px;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .translate-container select {
+      padding: 8px;
+      border-radius: 5px;
+      background: #fff;
+      color: #000;
+      font-size: 1em;
+    }
+
+    .translate-container button {
+      background: #ff9800;
+    }
+
+    .translate-container button:hover {
+      background: #e68a00;
+    }
+
+    .translate-options-btn {
+      background: #2196f3;
+    }
+
+    .translate-options-btn:hover {
+      background: #1976d2;
+    }
+
+    .translated-question {
+      font-size: 1em;
+      color: #ddd;
+      margin-top: 10px;
+      text-shadow: 0 0 2px black;
+    }
+
+    .translated-options {
+      font-size: 1em;
+      color: #ddd;
+      margin-top: 10px;
+      text-shadow: 0 0 2px black;
+    }
+
+    .translated-options ul {
+      list-style-type: none;
+      padding: 0;
+    }
+
+    .translated-options li {
+      background: none;
+      box-shadow: none;
+      padding: 5px 0;
+      color: #ddd;
+    }
+  </style>
+</head>
+<body>
+  <div class="quiz-container">
+    <div class="tops">
+      <button><a href="index.html">home</a></button>
+      <h3>Quiz.</h3>
+    </div>
+    <h1>Network and adminstration</h1>
+    <div class="progress-container">
+      <div class="progress-bar" id="progress"></div>
+    </div>
+    <p class="question" id="question"></p>
+    <div class="translate-container">
+      <select id="language-select">
+        <option value="en">English</option>
+        <option value="am">Amharic</option>
+        <option value="om">Oromo</option>
+      </select>
+      <button id="translate-btn">Translate Question</button>
+      <button id="translate-options-btn" class="translate-options-btn">Translate Options</button>
+    </div>
+    <p class="translated-question" id="translated-question"></p>
+    <div class="options" id="option"></div>
+    <div class="translated-options" id="translated-options"></div>
+    <div class="feedback-message" id="feedback"></div>
+    <div class="result" id="result"></div>
+    <div class="btn-container">
+      <button id="previous-btn" onclick="previous()" class="previous" disabled>Previous</button>
+      <button id="submit-btn" onclick="next()">Submit</button>
+      <button id="restart-btn" onclick="restart()" style="display: none;" class="restart">Restart</button>
+    </div>
+    <i class="name">by student Aklok Tilahun</i>
+  </div>
+
+  <audio id="correctSound" preload="auto">
+    <source src="great.mp3" type="audio/mpeg">
+    Your browser does not support the audio element.
+  </audio>
+  
+  <audio id="wrongSound" preload="auto">
+    <source src="note.mp3" type="audio/mpeg">
+    Your browser does not support the audio element.
+  </audio>
+
+  <script>
+    const questions = [
+  {
+    "question": "What is the main purpose of PC hardware maintenance?",
+    "option": ["A. Boost network speed", "B. Optimize component performance", "C. Install new software", "D. Manage user accounts"],
+    "correct": 1
+  },
+  {
+    "question": "Which peripherals are typically maintained in IT hardware maintenance?",
+    "option": ["A. Firewalls", "B. Cloud servers", "C. Keyboards and CD drives", "D. Web browsers"],
+    "correct": 2
+  },
+  {
+    "question": "What is a key part of a computer hardware maintenance program?",
+    "option": ["A. Cleaning fans and defragmenting drives", "B. Updating social media", "C. Changing passwords", "D. Monitoring internet traffic"],
+    "correct": 0
+  },
+  {
+    "question": "How often should firmware updates be performed?",
+    "option": ["A. Daily", "B. Every 6 months", "C. Weekly", "D. Every 2 years"],
+    "correct": 1
+  },
+  {
+    "question": "What is the best way to store device media?",
+    "option": ["A. In a humid environment", "B. Exposed to sunlight", "C. In a well-protected area", "D. Near magnetic fields"],
+    "correct": 2
+  },
+  {
+    "question": "What does peripheral maintenance include?",
+    "option": ["A. Repairing printers and scanners", "B. Configuring software", "C. Updating antivirus", "D. Managing databases"],
+    "correct": 0
+  },
+  {
+    "question": "What is the recommended tool for cleaning dust from a computer casing?",
+    "option": ["A. Wet cloth", "B. Furniture polish", "C. Anti-static cloth", "D. Strong solvent"],
+    "correct": 2
+  },
+  {
+    "question": "What is the first step in hardware maintenance?",
+    "option": ["A. Update drivers", "B. Turn off and unplug the computer", "C. Run diagnostics", "D. Clean the monitor"],
+    "correct": 1
+  },
+  {
+    "question": "Why is regular maintenance of computers important?",
+    "option": ["A. Increases software errors", "B. Prevents viruses and maintains performance", "C. Reduces storage", "D. Limits user access"],
+    "correct": 1
+  },
+  {
+    "question": "Which are the three types of maintenance listed in the document?",
+    "option": ["A. Manual, Automatic, Remote", "B. Predictive, Preventive, Corrective", "C. Scheduled, Random, Urgent", "D. Fixed, Periodic, Reactive"],
+    "correct": 1
+  },
+  {
+    "question": "What is predictive maintenance based on?",
+    "option": ["A. Fixed schedules", "B. Component condition", "C. Software updates", "D. User complaints"],
+    "correct": 1
+  },
+  {
+    "question": "What is required for implementing predictive maintenance?",
+    "option": ["A. Early fault detection", "B. Daily manual checks", "C. Software reinstallation", "D. Network monitoring"],
+    "correct": 0
+  },
+  {
+    "question": "What is an advantage of predictive maintenance?",
+    "option": ["A. High maintenance frequency", "B. Minimal maintenance with high reliability", "C. Low equipment lifespan", "D. Simple setup"],
+    "correct": 1
+  },
+  {
+    "question": "What is a disadvantage of predictive maintenance?",
+    "option": ["A. Eliminates all failures", "B. Increases downtime", "C. Requires specialized personnel", "D. Reduces costs"],
+    "correct": 2
+  },
+  {
+    "question": "What is the goal of preventive maintenance?",
+    "option": ["A. Service equipment before failures", "B. Fix issues after they occur", "C. Update operating systems", "D. Monitor user activity"],
+    "correct": 0
+  },
+  {
+    "question": "How is preventive maintenance scheduled?",
+    "option": ["A. After failures", "B. Based on user feedback", "C. Predetermined schedules", "D. Random intervals"],
+    "correct": 2
+  },
+  {
+    "question": "What defines corrective maintenance?",
+    "option": ["A. Daily cleaning", "B. Repairs after failure", "C. Scheduled upgrades", "D. Firmware updates"],
+    "correct": 1
+  },
+  {
+    "question": "What is a cost of corrective maintenance?",
+    "option": ["A. Software licenses", "B. Routine checks", "C. Lost production", "D. Employee training"],
+    "correct": 2
+  },
+  {
+    "question": "What is a hardware fault?",
+    "option": ["A. Virus infection", "B. Physical component malfunction", "C. Software crash", "D. Network failure"],
+    "correct": 1
+  },
+  {
+    "question": "What can cause a hardware fault?",
+    "option": ["A. Regular maintenance", "B. Software updates", "C. Harsh environmental conditions", "D. Secure power supply"],
+    "correct": 2
+  },
+  {
+    "question": "Which is a common PC hardware issue?",
+    "option": ["A. Slow browser", "B. Computer screen freezes", "C. Weak password", "D. Outdated apps"],
+    "correct": 1
+  },
+  {
+    "question": "What might cause a computer to shut off unexpectedly?",
+    "option": ["A. Failing power supply", "B. Fast processor", "C. Updated software", "D. Strong Wi-Fi"],
+    "correct": 0
+  },
+  {
+    "question": "What should you check if the computer screen is blank?",
+    "option": ["A. Keyboard settings", "B. Monitor or display", "C. Internet connection", "D. Software updates"],
+    "correct": 1
+  },
+  {
+    "question": "How can you diagnose malfunctioning hardware?",
+    "option": ["A. Change network settings", "B. Use device troubleshooter", "C. Reinstall software", "D. Update antivirus"],
+    "correct": 1
+  },
+  {
+    "question": "What can damage hardware components?",
+    "option": ["A. Unregulated power supply", "B. Regular cleaning", "C. Secure storage", "D. Software patches"],
+    "correct": 0
+  },
+  {
+    "question": "What is a solution for a computer that won’t start?",
+    "option": ["A. Update browser", "B. Check power supply", "C. Clear cache", "D. Change wallpaper"],
+    "correct": 1
+  },
+  {
+    "question": "How can you address a slow internet connection?",
+    "option": ["A. Clean monitor", "B. Reinstall OS", "C. Restart modem", "D. Update firmware daily"],
+    "correct": 2
+  },
+  {
+    "question": "What is used to blow debris from air intake slots?",
+    "option": ["A. Compressed air can", "B. Damp cloth", "C. Vacuum cleaner", "D. Wet brush"],
+    "correct": 0
+  },
+  {
+    "question": "What issue might cause the operating system to go missing?",
+    "option": ["A. Slow internet", "B. Hard drive not detected", "C. Weak Wi-Fi", "D. Old drivers"],
+    "correct": 1
+  },
+  {
+    "question": "How can you fix issues caused by unwanted background software?",
+    "option": ["A. Update firmware", "B. Change monitor settings", "C. Clean fans", "D. Kill unnecessary processes"],
+    "correct": 3
+  }
+];
+
+    let score = 0;
+    let currentQuestion = 0;
+    let userAnswers = new Array(questions.length).fill(null);
+    let answeredQuestions = new Array(questions.length).fill(false);
+
+    // DOM elements
+    const outQuestion = document.querySelector('#question');
+    const outOption = document.querySelector('#option');
+    const outResult = document.querySelector('#result');
+    const feedbackEl = document.querySelector('#feedback');
+    const submitBtn = document.querySelector('#submit-btn');
+    const previousBtn = document.querySelector('#previous-btn');
+    const restartBtn = document.querySelector('#restart-btn');
+    const correctSound = document.getElementById('correctSound');
+    const wrongSound = document.getElementById('wrongSound');
+    const progressBar = document.getElementById('progress');
+    const translateBtn = document.querySelector('#translate-btn');
+    const translateOptionsBtn = document.querySelector('#translate-options-btn');
+    const languageSelect = document.querySelector('#language-select');
+    const translatedQuestionEl = document.querySelector('#translated-question');
+    const translatedOptionsEl = document.querySelector('#translated-options');
+
+    function updateProgressBar() {
+      const answeredCount = answeredQuestions.filter(Boolean).length;
+      const progress = (answeredCount / questions.length) * 100;
+      progressBar.style.width = `${progress}%`;
+    }
+
+    function calculateScore() {
+      score = userAnswers.reduce((total, answer, index) => {
+        if (answer && answer.selected === questions[index].correct) {
+          return total + 1;
+        }
+        return total;
+      }, 0);
+    }
+
+    function updateButtonStates() {
+      previousBtn.disabled = currentQuestion === 0;
+      if (answeredQuestions[currentQuestion]) {
+        submitBtn.textContent = currentQuestion === questions.length - 1 ? "Finish" : "Next";
+      } else {
+        submitBtn.textContent = "Submit";
+      }
+    }
+
+    async function translateQuestion() {
+      const targetLang = languageSelect.value;
+      const text = questions[currentQuestion].question;
+
+      if (targetLang === 'en') {
+        translatedQuestionEl.textContent = '';
+        return;
+      }
+
+      try {
+        const response = await fetch(`https://translate.googleapis.com/translate_a/single?client=gtx&sl=en&tl=${targetLang}&dt=t&q=${encodeURI(text)}`);
+        const data = await response.json();
+        const translatedText = data[0][0][0];
+        translatedQuestionEl.textContent = translatedText;
+      } catch (error) {
+        console.error('Question translation error:', error);
+        translatedQuestionEl.textContent = `Translation unavailable for ${languageSelect.options[languageSelect.selectedIndex].text}.`;
+      }
+    }
+
+    async function translateOptions() {
+      const targetLang = languageSelect.value;
+      const options = questions[currentQuestion].option;
+
+      if (targetLang === 'en') {
+        translatedOptionsEl.innerHTML = '';
+        return;
+      }
+
+      try {
+        const translatedOptions = await Promise.all(options.map(async (option, index) => {
+          const response = await fetch(`https://translate.googleapis.com/translate_a/single?client=gtx&sl=en&tl=${targetLang}&dt=t&q=${encodeURI(option)}`);
+          const data = await response.json();
+          const translatedText = data[0][0][0];
+          return `<li>${String.fromCharCode(65 + index)}. ${translatedText}</li>`;
+        }));
+        translatedOptionsEl.innerHTML = `<ul>${translatedOptions.join('')}</ul>`;
+      } catch (error) {
+        console.error('Options translation error:', error);
+        translatedOptionsEl.innerHTML = `<p>Translation unavailable for ${languageSelect.options[languageSelect.selectedIndex].text} options.</p>`;
+      }
+    }
+
+    function display() {
+      if (currentQuestion >= questions.length) {
+        showFinalResult();
+        return;
+      }
+
+      const questionData = questions[currentQuestion];
+      outQuestion.innerHTML = (currentQuestion + 1) + ". " + questionData.question;
+
+      const optionsHtml = questionData.option
+        .map((option, index) => 
+          `<label>
+            <input type="radio" name="answer" value="${index}" 
+              ${userAnswers[currentQuestion]?.selected === index ? 'checked' : ''}>
+            ${option}
+          </label>`
+        )
+        .join('');
+      outOption.innerHTML = optionsHtml;
+
+      outResult.innerHTML = "";
+      feedbackEl.innerHTML = "";
+      feedbackEl.className = "feedback-message";
+      translatedQuestionEl.textContent = "";
+      translatedOptionsEl.innerHTML = "";
+      
+      updateProgressBar();
+      updateButtonStates();
+    }
+
+    function next() {
+      const selectedOption = document.querySelector('input[name="answer"]:checked');
+      
+      if (answeredQuestions[currentQuestion] && !selectedOption) {
+        currentQuestion++;
+        display();
+        return;
+      }
+      
+      if (!selectedOption && !answeredQuestions[currentQuestion]) {
+        outResult.innerHTML = "<span style='color: red;'>Please select an answer!</span>";
+        return;
+      }
+
+      const answer = parseInt(selectedOption.value);
+      const wasPreviouslyCorrect = userAnswers[currentQuestion]?.selected === questions[currentQuestion].correct;
+
+      userAnswers[currentQuestion] = {
+        question: questions[currentQuestion].question,
+        selected: answer,
+        correct: questions[currentQuestion].correct,
+        selectedOption: questions[currentQuestion].option[answer],
+        correctOption: questions[currentQuestion].option[questions[currentQuestion].correct]
+      };
+      
+      answeredQuestions[currentQuestion] = true;
+
+      calculateScore();
+
+      if (answer === questions[currentQuestion].correct) {
+        feedbackEl.innerHTML = "Great job! ✔️";
+        feedbackEl.className = "feedback-message correct-feedback";
+        correctSound.currentTime = 0;
+        correctSound.play().catch(e => console.log("Audio play failed:", e));
+      } else {
+        if (wasPreviouslyCorrect) {
+          score--;
+        }
+        feedbackEl.innerHTML = "Wrong answer ❌";
+        feedbackEl.className = "feedback-message wrong-feedback";
+        wrongSound.currentTime = 0;
+        wrongSound.play().catch(e => console.log("Audio play failed:", e));
+      }
+
+      currentQuestion++;
+      setTimeout(display, 1500);
+    }
+
+    function previous() {
+      if (currentQuestion > 0) {
+        currentQuestion--;
+        display();
+      }
+    }
+
+    function showFinalResult() {
+      outQuestion.innerHTML = "Quiz completed!";
+      outOption.innerHTML = "";
+      outResult.innerHTML = `
+        <h3>Your final score is: ${score}/${questions.length}</h3>
+        <h4>Results:</h4>
+        <ul>
+          ${userAnswers.map((answer, index) => `
+            <li>
+              <strong>Question ${index + 1}:</strong> ${answer?.question || "Not answered"}<br>
+              <strong>Your Answer:</strong> ${answer?.selectedOption || "No answer"}
+              ${answer?.selected === answer?.correct ? " ✔️" : " ❌"}
+              <br>
+              <strong>Correct Answer:</strong> ${answer?.correctOption || questions[index].option[questions[index].correct]}
+            </li>
+          `).join('')}
+        </ul>
+      `;
+      submitBtn.style.display = "none";
+      previousBtn.style.display = "none";
+      restartBtn.style.display = "inline-block";
+      translateBtn.style.display = "none";
+      translateOptionsBtn.style.display = "none";
+      languageSelect.style.display = "none";
+      progressBar.style.width = "100%";
+    }
+
+    function restart() {
+      score = 0;
+      currentQuestion = 0;
+      userAnswers = new Array(questions.length).fill(null);
+      answeredQuestions = new Array(questions.length).fill(false);
+      submitBtn.style.display = "inline-block";
+      previousBtn.style.display = "inline-block";
+      restartBtn.style.display = "none";
+      translateBtn.style.display = "inline-block";
+      translateOptionsBtn.style.display = "inline-block";
+      languageSelect.style.display = "inline-block";
+      submitBtn.textContent = "Submit";
+      display();
+    }
+
+    translateBtn.addEventListener('click', translateQuestion);
+    translateOptionsBtn.addEventListener('click', translateOptions);
+
+    display();
+  </script>
+</body>
+</html>-shadow: 0 0 10px #fff;
       background: linear-gradient(40deg, blue,black);
     }
 
